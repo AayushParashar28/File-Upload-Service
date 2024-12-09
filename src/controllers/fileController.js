@@ -51,12 +51,14 @@ exports.deleteFile = async (req, res) => {
 
     const filePath = path.join(__dirname, '../../uploads', file.filename);
 
+    // Delete the file from the filesystem
     fs.unlink(filePath, async (err) => {
       if (err) {
-        return res.status(500).json({ error: 'Error deleting the file' });
+        return res.status(500).json({ error: 'Error deleting the file from the server' });
       }
 
-      await file.remove();
+      // Delete the file metadata from the database
+      await File.findByIdAndDelete(req.params.id);
       res.status(200).json({ message: 'File deleted successfully' });
     });
   } catch (error) {
